@@ -1,0 +1,7 @@
+{
+    "password_hash": "",
+    "secret_key": "",
+    "session_timeout_minutes": 15,
+    "port": 5000,
+    "target_mac": ""
+}

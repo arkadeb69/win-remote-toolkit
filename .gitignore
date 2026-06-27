@@ -1,0 +1,15 @@
+# Compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# User configurations containing sensitive details
+config.json
+
+# Environment logs
+*.log
+
+# Windows-specific system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
