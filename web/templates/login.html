@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Login - PC Remote Lock</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <span class="header-title">PC Remote Lock</span>
+        <div class="controls-row">
+            <button id="theme-toggle" class="icon-btn" title="Toggle theme">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="logo-container">
+                <span class="logo-icon">🔒</span>
+                <h1 class="app-name">PC Remote Lock</h1>
+                <p class="app-subtitle">Enter your password to access the control panel</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger">
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                
+                <div class="input-group">
+                    <label for="password" class="input-label">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="input-field" 
+                        placeholder="••••••••" 
+                        required 
+                        autofocus
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Unlock Dashboard</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
