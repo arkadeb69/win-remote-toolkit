@@ -1,6 +1,6 @@
 # PC Remote Lock
 
-A mobile-friendly Flask web application that allows you to lock, sleep, or shutdown your Windows PC from any device on your local network or securely from anywhere over the internet via Cloudflare Tunnels.
+A mobile-friendly Flask web application that allows you to lock, sleep, or shutdown your Windows PC from anywhere over the internet via Cloudflare Tunnels.
 
 Tags: `windows-lock`, `remote-lock`, `flask-app`, `cloudflare-tunnel`, `python`, `win32-api`
 
