@@ -453,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const activityEl = document.getElementById('presence-activity');
                 const sessionStartedEl = document.getElementById('presence-session-started');
                 const deviceTitleEl = document.getElementById('presence-device-title');
+                const deviceEl = document.getElementById('presence-device');
                 
                 if (statusEl && statusEl.textContent !== 'Online') {
                     statusEl.textContent = 'Online';
@@ -461,6 +462,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (deviceTitleEl && data.device && deviceTitleEl.textContent !== data.device) {
                     deviceTitleEl.textContent = data.device;
+                }
+
+                if (deviceEl && data.device && deviceEl.textContent !== data.device) {
+                    deviceEl.textContent = data.device;
                 }
 
                 if (data.activity !== lastActivity) {
@@ -490,6 +495,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusEl = document.getElementById('presence-status');
         const activityEl = document.getElementById('presence-activity');
         const sessionStartedEl = document.getElementById('presence-session-started');
+        const deviceTitleEl = document.getElementById('presence-device-title');
+        const deviceEl = document.getElementById('presence-device');
         
         if (statusEl) {
             statusEl.textContent = 'Unavailable';
@@ -497,6 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (activityEl) activityEl.textContent = 'Unavailable';
         if (sessionStartedEl) sessionStartedEl.textContent = 'Unavailable';
+        if (deviceTitleEl) deviceTitleEl.textContent = 'Destructive-LOQ';
+        if (deviceEl) deviceEl.textContent = 'Destructive-LOQ';
         
         startDurationCounter(null);
     }

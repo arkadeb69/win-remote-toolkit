@@ -40,7 +40,7 @@ def write_status(status_str):
             "sessionStarted": SESSION_STARTED if status_str == "online" else None,
             "lastSeen": timestamp,
             "activity": "Working on laptop" if status_str == "online" else "Offline",
-            "device": "Arkadeb's Laptop",
+            "device": "Destructive-LOQ",
             "version": "1.0"
         }
         with open(STATUS_PATH, "w") as f:
