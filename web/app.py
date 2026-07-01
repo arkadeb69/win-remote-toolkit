@@ -63,6 +63,14 @@ app.secret_key = config.get("secret_key", secrets.token_hex(24))
 session_timeout = config.get("session_timeout_minutes", 15)
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=session_timeout)
 
+# Start the Live Presence System
+try:
+    from presence import start_presence_system
+    start_presence_system()
+    logger.info("Live Presence System initialized and started.")
+except Exception as presence_err:
+    logger.error(f"Failed to start Live Presence System: {presence_err}")
+
 def get_local_ip():
     """Resolves the primary local network IP address of the server."""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

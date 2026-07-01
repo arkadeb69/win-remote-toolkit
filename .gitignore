@@ -13,3 +13,7 @@ config.json
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Live Presence system runtime files
+status.json
+status.json.tmp
