@@ -1,54 +1,41 @@
 Set WshShell = CreateObject("WScript.Shell")
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 
-' Dynamically resolve parent directory of the script
+' Resolve parent directory
 strPath = objFSO.GetParentFolderName(WScript.ScriptFullName)
 
-Function FindPythonW()
-    Dim val, v
-    Dim versions
-    versions = Array("3.15", "3.14", "3.13", "3.12", "3.11", "3.10", "3.9")
-    
-    On Error Resume Next
-    For Each v In versions
-        val = WshShell.RegRead("HKCU\Software\Python\PythonCore\" & v & "\InstallPath\WindowedExecutablePath")
-        If Err.Number = 0 And val <> "" Then
-            If objFSO.FileExists(val) Then
-                FindPythonW = val
-                Exit Function
-            End If
-        End If
-        Err.Clear
-        val = WshShell.RegRead("HKLM\Software\Python\PythonCore\" & v & "\InstallPath\WindowedExecutablePath")
-        If Err.Number = 0 And val <> "" Then
-            If objFSO.FileExists(val) Then
-                FindPythonW = val
-                Exit Function
-            End If
-        End If
-        Err.Clear
-    Next
-    
-    Dim envPath, paths, p, fullPath
-    envPath = WshShell.ExpandEnvironmentStrings("%PATH%")
-    paths = Split(envPath, ";")
-    For Each p In paths
-        If p <> "" Then
-            If Right(p, 1) <> "\" Then p = p & "\"
-            If InStr(LCase(p), "microsoft\windowsapps") = 0 Then
-                fullPath = p & "pythonw.exe"
-                If objFSO.FileExists(fullPath) Then
-                    FindPythonW = fullPath
-                    Exit Function
-                End If
-            End If
-        End If
-    Next
+Dim pythonwPath
+pythonwPath = ""
 
-    FindPythonW = "pythonw.exe"
-End Function
+' Try reading registry
+On Error Resume Next
+pythonwPath = WshShell.RegRead("HKCU\Software\Python\PythonCore\3.14\InstallPath\WindowedExecutablePath")
+On Error GoTo 0
 
-pythonwPath = FindPythonW()
+' Fallback 1: Direct check for the discovered path
+If pythonwPath = "" Or Not objFSO.FileExists(pythonwPath) Then
+    Dim localAppData
+    localAppData = WshShell.ExpandEnvironmentStrings("%LOCALAPPDATA%")
+    Dim checkPath
+    checkPath = localAppData & "\Python\pythoncore-3.14-64\pythonw.exe"
+    If objFSO.FileExists(checkPath) Then
+        pythonwPath = checkPath
+    End If
+End If
 
-' Run the Flask app inside the web folder silently
-WshShell.Run """" & pythonwPath & """ """ & strPath & "\web\app.py""", 0, False
+' Fallback 2: Check for WindowsApps pyw.exe
+If pythonwPath = "" Or Not objFSO.FileExists(pythonwPath) Then
+    Dim checkPathApps
+    checkPathApps = WshShell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Microsoft\WindowsApps\pyw.exe"
+    If objFSO.FileExists(checkPathApps) Then
+        pythonwPath = checkPathApps
+    End If
+End If
+
+' Fallback 3: Standard pyw.exe
+If pythonwPath = "" Then
+    pythonwPath = "pyw.exe"
+End If
+
+' Run the Flask app silently
+WshShell.Run """" & pythonwPath & """ """ & strPath & "\web\app.py""", 0, false
