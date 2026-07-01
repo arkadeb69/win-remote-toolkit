@@ -1065,3 +1065,116 @@ body {
         font-size: 18px;
     }
 }
+
+/* ==============================================================================
+   Live Presence Panel & Glowing Dot
+   ============================================================================== */
+.presence-card {
+    border-color: var(--card-border-glass);
+}
+
+.presence-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.live-indicator-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 6px 12px;
+    border-radius: 50px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.glowing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-emerald);
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+}
+
+.glowing-dot::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--accent-emerald);
+    opacity: 0.4;
+    animation: softBreathing 2s infinite ease-in-out;
+}
+
+@keyframes softBreathing {
+    0%, 100% { transform: scale(0.8); opacity: 0.3; }
+    50% { transform: scale(1.6); opacity: 0.7; }
+}
+
+.live-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.presence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+.presence-item {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+}
+
+[data-theme="dark"] .presence-item {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.presence-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}
+
+.presence-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+    .presence-grid {
+        gap: 12px;
+    }
+    
+    .presence-item {
+        padding: 10px;
+    }
+    
+    .presence-value {
+        font-size: 12px;
+    }
+}
+

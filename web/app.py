@@ -112,7 +112,7 @@ def security_checks():
 
     # 2. Authentication routing guards
     # Allow access to static assets, landing page, and login endpoints without auth
-    if request.endpoint not in ("index", "login", "static") and not session.get("logged_in"):
+    if request.endpoint not in ("index", "login", "static", "get_status_json") and not session.get("logged_in"):
         # For API requests, return a JSON error
         if request.path.startswith("/api/"):
             return jsonify({"error": "Session expired or unauthorized."}), 401
@@ -177,6 +177,20 @@ def logout():
 # ==============================================================================
 # API Endpoints
 # ==============================================================================
+
+@app.route("/status.json", methods=["GET"])
+def get_status_json():
+    """Serves the status.json presence information."""
+    try:
+        status_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "status.json")
+        if os.path.exists(status_path):
+            with open(status_path, "r") as f:
+                data = json.load(f)
+            return jsonify(data)
+        else:
+            return jsonify({"status": "unavailable", "message": "status.json not found"}), 404
+    except Exception as e:
+        return jsonify({"status": "unavailable", "message": str(e)}), 500
 
 @app.route("/api/status", methods=["GET"])
 def api_status():

@@ -32,36 +32,50 @@
             <p class="hero-subheading">This workstation is currently online and accepting authenticated remote commands.</p>
         </div>
 
-        <!-- Status Card -->
-        <div class="card status-glass-card" 
-             id="landing-status-card"
-             data-server-time="{{ server_time_iso }}" 
-             data-uptime-seconds="{{ uptime_seconds }}">
-            
-            <div class="status-header">
-                <span class="card-section-title">SYSTEM METRICS</span>
-                <div class="connection-indicator">
-                    <span class="indicator-dot active-pulse"></span>
-                    <span class="indicator-label">ACTIVE</span>
+        <!-- Live Presence Card -->
+        <div class="card glass-card presence-card" id="presence-card">
+            <div class="presence-header">
+                <div class="presence-title-group">
+                    <h2 class="card-title" id="presence-title">🟢 Live Presence</h2>
+                </div>
+                <div class="live-indicator-badge" id="live-indicator-badge">
+                    <span class="glowing-dot"></span>
+                    <span class="live-label">LIVE</span>
                 </div>
             </div>
-
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <span class="metric-label">Device Name</span>
-                    <span class="metric-value" id="landing-device-name">{{ device_name }}</span>
+            
+            <div class="presence-grid">
+                <div class="presence-item">
+                    <span class="presence-label">Status</span>
+                    <span class="presence-value text-success" id="presence-status">Online</span>
                 </div>
-                <div class="metric-box">
-                    <span class="metric-label">Local IP Address</span>
-                    <span class="metric-value" id="landing-ip-address">{{ ip_address }}</span>
+                <div class="presence-item" id="activity-item">
+                    <span class="presence-label">Current Activity</span>
+                    <span class="presence-value" id="presence-activity">Working on laptop</span>
                 </div>
-                <div class="metric-box">
-                    <span class="metric-label">Current Server Time</span>
-                    <span class="metric-value font-mono" id="landing-server-time">--:--:--</span>
+                <div class="presence-item" id="session-started-item">
+                    <span class="presence-label">Session Started</span>
+                    <span class="presence-value" id="presence-session-started">--</span>
                 </div>
-                <div class="metric-box">
-                    <span class="metric-label">Server Uptime</span>
-                    <span class="metric-value font-mono" id="landing-server-uptime">--h --m --s</span>
+                <div class="presence-item" id="live-duration-item">
+                    <span class="presence-label">Live Duration</span>
+                    <span class="presence-value font-mono" id="presence-live-duration">--h --m --s</span>
+                </div>
+                <div class="presence-item" id="last-seen-item" style="display: none;">
+                    <span class="presence-label">Last Seen</span>
+                    <span class="presence-value" id="presence-last-seen">--</span>
+                </div>
+                <div class="presence-item">
+                    <span class="presence-label">Device</span>
+                    <span class="presence-value" id="presence-device">Arkadeb's Laptop</span>
+                </div>
+                <div class="presence-item">
+                    <span class="presence-label">Connection</span>
+                    <span class="presence-value" id="presence-connection">Secure via Cloudflare Tunnel</span>
+                </div>
+                <div class="presence-item">
+                    <span class="presence-label">Availability</span>
+                    <span class="presence-value" id="presence-availability">Remote Control Ready</span>
                 </div>
             </div>
         </div>

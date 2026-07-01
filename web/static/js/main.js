@@ -348,5 +348,177 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkServerStatus();
 
+    // ==============================================================================
+    // Live Presence System
+    // ==============================================================================
+    let durationTimer = null;
+    let lastActivity = null;
+    let lastSessionStarted = null;
+    let lastStatus = null;
+
+    function formatSessionStarted(isoString) {
+        if (!isoString) return 'Unavailable';
+        const date = new Date(isoString);
+        if (isNaN(date.getTime())) return 'Unavailable';
+
+        const now = new Date();
+        const isToday = date.getDate() === now.getDate() &&
+                        date.getMonth() === now.getMonth() &&
+                        date.getFullYear() === now.getFullYear();
+
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        const isYesterday = date.getDate() === yesterday.getDate() &&
+                            date.getMonth() === yesterday.getMonth() &&
+                            date.getFullYear() === yesterday.getFullYear();
+
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const timeStr = `${hours}:${minutes} ${ampm}`;
+
+        if (isToday) {
+            return `Today at ${timeStr}`;
+        } else if (isYesterday) {
+            return `Yesterday at ${timeStr}`;
+        } else {
+            const day = String(date.getDate()).padStart(2, '0');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day} ${month} ${year} • ${timeStr}`;
+        }
+    }
+
+    function startDurationCounter(sessionStartedIso) {
+        if (durationTimer) {
+            clearInterval(durationTimer);
+            durationTimer = null;
+        }
+
+        const durationEl = document.getElementById('presence-live-duration');
+        if (!sessionStartedIso) {
+            if (durationEl) durationEl.textContent = '--h --m --s';
+            return;
+        }
+
+        const startDate = new Date(sessionStartedIso);
+        if (isNaN(startDate.getTime())) {
+            if (durationEl) durationEl.textContent = '--h --m --s';
+            return;
+        }
+
+        const updateDuration = () => {
+            const now = new Date();
+            const diffMs = now.getTime() - startDate.getTime();
+            if (diffMs < 0) {
+                if (durationEl) durationEl.textContent = '00h 00m 00s';
+                return;
+            }
+            
+            const totalSeconds = Math.floor(diffMs / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const pad = (num) => String(num).padStart(2, '0');
+            const durationStr = `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+
+            if (durationEl) {
+                durationEl.textContent = durationStr;
+            }
+        };
+
+        updateDuration();
+        durationTimer = setInterval(updateDuration, 1000);
+    }
+
+    function updatePresenceUI(data) {
+        const status = data.status || 'unavailable';
+        const activity = data.activity || 'Unavailable';
+        const sessionStarted = data.sessionStarted || null;
+        const lastSeen = data.lastSeen || null;
+        const device = data.device || 'Arkadeb\'s Laptop';
+
+        const presenceTitle = document.getElementById('presence-title');
+        const liveIndicator = document.getElementById('live-indicator-badge');
+        const statusEl = document.getElementById('presence-status');
+        const activityEl = document.getElementById('presence-activity');
+        const sessionStartedEl = document.getElementById('presence-session-started');
+        const lastSeenEl = document.getElementById('presence-last-seen');
+        const deviceEl = document.getElementById('presence-device');
+        const connectionEl = document.getElementById('presence-connection');
+        const availabilityEl = document.getElementById('presence-availability');
+
+        const sessionStartedItem = document.getElementById('session-started-item');
+        const liveDurationItem = document.getElementById('live-duration-item');
+        const lastSeenItem = document.getElementById('last-seen-item');
+
+        if (status !== lastStatus || activity !== lastActivity || sessionStarted !== lastSessionStarted) {
+            lastStatus = status;
+            lastActivity = activity;
+            lastSessionStarted = sessionStarted;
+
+            if (status === 'online') {
+                if (presenceTitle) presenceTitle.innerHTML = '🟢 Live Presence';
+                if (liveIndicator) liveIndicator.style.display = 'flex';
+                if (statusEl) {
+                    statusEl.textContent = 'Online';
+                    statusEl.className = 'presence-value text-success';
+                }
+                if (activityEl) activityEl.textContent = activity;
+                if (sessionStartedEl) sessionStartedEl.textContent = formatSessionStarted(sessionStarted);
+                if (deviceEl) deviceEl.textContent = device;
+                if (connectionEl) connectionEl.textContent = 'Secure via Cloudflare Tunnel';
+                if (availabilityEl) availabilityEl.textContent = 'Remote Control Ready';
+
+                if (sessionStartedItem) sessionStartedItem.style.display = 'flex';
+                if (liveDurationItem) liveDurationItem.style.display = 'flex';
+                if (lastSeenItem) lastSeenItem.style.display = 'none';
+
+                startDurationCounter(sessionStarted);
+            } else {
+                if (presenceTitle) presenceTitle.innerHTML = '🔴 Live Presence';
+                if (liveIndicator) liveIndicator.style.display = 'none';
+                
+                if (statusEl) {
+                    statusEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
+                    statusEl.className = 'presence-value text-muted';
+                }
+                if (activityEl) activityEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
+                if (lastSeenEl) lastSeenEl.textContent = lastSeen ? formatSessionStarted(lastSeen) : 'Unavailable';
+                if (deviceEl) deviceEl.textContent = device;
+                if (connectionEl) connectionEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
+                if (availabilityEl) availabilityEl.textContent = 'Unavailable';
+
+                if (sessionStartedItem) sessionStartedItem.style.display = 'none';
+                if (liveDurationItem) liveDurationItem.style.display = 'none';
+                if (lastSeenItem) lastSeenItem.style.display = 'flex';
+
+                startDurationCounter(null);
+            }
+        }
+    }
+
+    async function pollPresence() {
+        try {
+            const response = await fetch('/status.json', { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Unavailable');
+            }
+            const data = await response.json();
+            updatePresenceUI(data);
+        } catch (e) {
+            updatePresenceUI({ status: 'unavailable' });
+        }
+    }
+
+    if (document.getElementById('presence-card')) {
+        pollPresence();
+        setInterval(pollPresence, 5000);
+    }
+
 });
 

@@ -32,43 +32,51 @@
     </header>
 
     <div class="container dashboard-container">
-        <!-- System Status Summary -->
-        <div class="card glass-card status-card">
-            <div class="status-header">
-                <div class="status-title-group">
-                    <h2 class="card-title">Server Status</h2>
+        <!-- Live Presence Card -->
+        <div class="card glass-card presence-card" id="presence-card">
+            <div class="presence-header">
+                <div class="presence-title-group">
+                    <h2 class="card-title" id="presence-title">🟢 Live Presence</h2>
                     <span class="user-role-badge">Administrator</span>
                 </div>
-                <div id="connection-badge" class="status-badge badge-connected">
-                    <span class="badge-dot pulse-dot"></span>
-                    <span id="badge-text">Connecting...</span>
+                <div class="live-indicator-badge" id="live-indicator-badge">
+                    <span class="glowing-dot"></span>
+                    <span class="live-label">LIVE</span>
                 </div>
             </div>
             
-            <div class="status-grid">
-                <div class="status-item">
-                    <span class="status-label">Server Status</span>
-                    <span class="status-value text-success">🟢 Active</span>
+            <div class="presence-grid">
+                <div class="presence-item">
+                    <span class="presence-label">Status</span>
+                    <span class="presence-value text-success" id="presence-status">Online</span>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">Server Uptime</span>
-                    <span class="status-value font-mono" id="server-uptime">--</span>
+                <div class="presence-item" id="activity-item">
+                    <span class="presence-label">Current Activity</span>
+                    <span class="presence-value" id="presence-activity">Working on laptop</span>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">Device Name</span>
-                    <span class="status-value" id="device-name">--</span>
+                <div class="presence-item" id="session-started-item">
+                    <span class="presence-label">Session Started</span>
+                    <span class="presence-value" id="presence-session-started">--</span>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">IP Address</span>
-                    <span class="status-value" id="ip-address">--</span>
+                <div class="presence-item" id="live-duration-item">
+                    <span class="presence-label">Live Duration</span>
+                    <span class="presence-value font-mono" id="presence-live-duration">--h --m --s</span>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">Local Time</span>
-                    <span class="status-value font-mono" id="server-time">--</span>
+                <div class="presence-item" id="last-seen-item" style="display: none;">
+                    <span class="presence-label">Last Seen</span>
+                    <span class="presence-value" id="presence-last-seen">--</span>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">MAC Address</span>
-                    <span class="status-value font-mono" id="mac-address">--</span>
+                <div class="presence-item">
+                    <span class="presence-label">Device</span>
+                    <span class="presence-value" id="presence-device">Arkadeb's Laptop</span>
+                </div>
+                <div class="presence-item">
+                    <span class="presence-label">Connection</span>
+                    <span class="presence-value" id="presence-connection">Secure via Cloudflare Tunnel</span>
+                </div>
+                <div class="presence-item">
+                    <span class="presence-label">Availability</span>
+                    <span class="presence-value" id="presence-availability">Remote Control Ready</span>
                 </div>
             </div>
         </div>

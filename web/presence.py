@@ -13,13 +13,32 @@ logger = logging.getLogger("PCRemoteLock.Presence")
 # Resolve status.json path in the workspace root
 STATUS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "status.json")
 
+SESSION_STARTED = None
+
 def write_status(status_str):
+    global SESSION_STARTED
     try:
         timestamp = datetime.now().astimezone().replace(microsecond=0).isoformat()
+        if status_str == "online":
+            if SESSION_STARTED is None:
+                try:
+                    if os.path.exists(STATUS_PATH):
+                        with open(STATUS_PATH, "r") as f:
+                            old_data = json.load(f)
+                            if old_data.get("status") == "online" and "sessionStarted" in old_data:
+                                SESSION_STARTED = old_data["sessionStarted"]
+                except Exception:
+                    pass
+            if SESSION_STARTED is None:
+                SESSION_STARTED = timestamp
+        else:
+            SESSION_STARTED = None
+
         data = {
             "status": status_str,
+            "sessionStarted": SESSION_STARTED if status_str == "online" else None,
             "lastSeen": timestamp,
-            "activity": "Working on laptop",
+            "activity": "Working on laptop" if status_str == "online" else "Offline",
             "device": "Arkadeb's Laptop",
             "version": "1.0"
         }
