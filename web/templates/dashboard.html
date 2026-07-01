@@ -35,14 +35,14 @@
         <!-- Live Presence Card -->
         <div class="card glass-card presence-card" id="presence-card">
             <div class="presence-header">
-                <div class="presence-title-group">
-                    <h2 class="card-title" id="presence-title">🟢 Live Presence</h2>
-                    <span class="user-role-badge">Administrator</span>
+                <div class="presence-branding">
+                    <div class="live-indicator-badge" id="live-indicator-badge">
+                        <span class="glowing-dot"></span>
+                        <span class="live-label">LIVE</span>
+                    </div>
+                    <span class="presence-device-title" id="presence-device-title">Arkadeb's Laptop</span>
                 </div>
-                <div class="live-indicator-badge" id="live-indicator-badge">
-                    <span class="glowing-dot"></span>
-                    <span class="live-label">LIVE</span>
-                </div>
+                <span class="user-role-badge">Administrator</span>
             </div>
             
             <div class="presence-grid">
@@ -52,7 +52,7 @@
                 </div>
                 <div class="presence-item" id="activity-item">
                     <span class="presence-label">Current Activity</span>
-                    <span class="presence-value" id="presence-activity">Working on laptop</span>
+                    <span class="presence-value" id="presence-activity">--</span>
                 </div>
                 <div class="presence-item" id="session-started-item">
                     <span class="presence-label">Session Started</span>
@@ -60,23 +60,7 @@
                 </div>
                 <div class="presence-item" id="live-duration-item">
                     <span class="presence-label">Live Duration</span>
-                    <span class="presence-value font-mono" id="presence-live-duration">--h --m --s</span>
-                </div>
-                <div class="presence-item" id="last-seen-item" style="display: none;">
-                    <span class="presence-label">Last Seen</span>
-                    <span class="presence-value" id="presence-last-seen">--</span>
-                </div>
-                <div class="presence-item">
-                    <span class="presence-label">Device</span>
-                    <span class="presence-value" id="presence-device">Arkadeb's Laptop</span>
-                </div>
-                <div class="presence-item">
-                    <span class="presence-label">Connection</span>
-                    <span class="presence-value" id="presence-connection">Secure via Cloudflare Tunnel</span>
-                </div>
-                <div class="presence-item">
-                    <span class="presence-label">Availability</span>
-                    <span class="presence-value" id="presence-availability">Remote Control Ready</span>
+                    <span class="presence-value font-mono" id="presence-live-duration">00h 00m 00s</span>
                 </div>
             </div>
         </div>

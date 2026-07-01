@@ -1081,6 +1081,19 @@ body {
     width: 100%;
 }
 
+.presence-branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.presence-device-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+}
+
 .live-indicator-badge {
     display: flex;
     align-items: center;

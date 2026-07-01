@@ -7,7 +7,8 @@ import secrets
 import json
 import ctypes
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
+IST = timezone(timedelta(hours=5, minutes=30))
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash
 
@@ -133,7 +134,7 @@ def index():
     if session.get("logged_in"):
         return redirect(url_for("dashboard"))
     uptime_seconds = int(time.time() - START_TIME)
-    server_time_iso = datetime.now().isoformat()
+    server_time_iso = datetime.now(IST).isoformat()
     return render_template(
         "landing.html",
         device_name=socket.gethostname(),
@@ -197,7 +198,7 @@ def api_status():
     """Returns real-time status details of the computer."""
     return jsonify({
         "status": "Running",
-        "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "current_time": datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"),
         "device_name": socket.gethostname(),
         "ip_address": get_local_ip(),
         "uptime": get_uptime_string(),

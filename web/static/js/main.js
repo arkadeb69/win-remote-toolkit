@@ -354,7 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let durationTimer = null;
     let lastActivity = null;
     let lastSessionStarted = null;
-    let lastStatus = null;
 
     function formatSessionStarted(isoString) {
         if (!isoString) return 'Unavailable';
@@ -400,13 +399,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const durationEl = document.getElementById('presence-live-duration');
         if (!sessionStartedIso) {
-            if (durationEl) durationEl.textContent = '--h --m --s';
+            if (durationEl) durationEl.textContent = '00h 00m 00s';
             return;
         }
 
         const startDate = new Date(sessionStartedIso);
         if (isNaN(startDate.getTime())) {
-            if (durationEl) durationEl.textContent = '--h --m --s';
+            if (durationEl) durationEl.textContent = '00h 00m 00s';
             return;
         }
 
@@ -435,84 +434,71 @@ document.addEventListener('DOMContentLoaded', () => {
         durationTimer = setInterval(updateDuration, 1000);
     }
 
-    function updatePresenceUI(data) {
-        const status = data.status || 'unavailable';
-        const activity = data.activity || 'Unavailable';
-        const sessionStarted = data.sessionStarted || null;
-        const lastSeen = data.lastSeen || null;
-        const device = data.device || 'Arkadeb\'s Laptop';
-
-        const presenceTitle = document.getElementById('presence-title');
-        const liveIndicator = document.getElementById('live-indicator-badge');
-        const statusEl = document.getElementById('presence-status');
-        const activityEl = document.getElementById('presence-activity');
-        const sessionStartedEl = document.getElementById('presence-session-started');
-        const lastSeenEl = document.getElementById('presence-last-seen');
-        const deviceEl = document.getElementById('presence-device');
-        const connectionEl = document.getElementById('presence-connection');
-        const availabilityEl = document.getElementById('presence-availability');
-
-        const sessionStartedItem = document.getElementById('session-started-item');
-        const liveDurationItem = document.getElementById('live-duration-item');
-        const lastSeenItem = document.getElementById('last-seen-item');
-
-        if (status !== lastStatus || activity !== lastActivity || sessionStarted !== lastSessionStarted) {
-            lastStatus = status;
-            lastActivity = activity;
-            lastSessionStarted = sessionStarted;
-
-            if (status === 'online') {
-                if (presenceTitle) presenceTitle.innerHTML = '🟢 Live Presence';
-                if (liveIndicator) liveIndicator.style.display = 'flex';
-                if (statusEl) {
-                    statusEl.textContent = 'Online';
-                    statusEl.className = 'presence-value text-success';
-                }
-                if (activityEl) activityEl.textContent = activity;
-                if (sessionStartedEl) sessionStartedEl.textContent = formatSessionStarted(sessionStarted);
-                if (deviceEl) deviceEl.textContent = device;
-                if (connectionEl) connectionEl.textContent = 'Secure via Cloudflare Tunnel';
-                if (availabilityEl) availabilityEl.textContent = 'Remote Control Ready';
-
-                if (sessionStartedItem) sessionStartedItem.style.display = 'flex';
-                if (liveDurationItem) liveDurationItem.style.display = 'flex';
-                if (lastSeenItem) lastSeenItem.style.display = 'none';
-
-                startDurationCounter(sessionStarted);
-            } else {
-                if (presenceTitle) presenceTitle.innerHTML = '🔴 Live Presence';
-                if (liveIndicator) liveIndicator.style.display = 'none';
-                
-                if (statusEl) {
-                    statusEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
-                    statusEl.className = 'presence-value text-muted';
-                }
-                if (activityEl) activityEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
-                if (lastSeenEl) lastSeenEl.textContent = lastSeen ? formatSessionStarted(lastSeen) : 'Unavailable';
-                if (deviceEl) deviceEl.textContent = device;
-                if (connectionEl) connectionEl.textContent = status === 'offline' ? 'Offline' : 'Unavailable';
-                if (availabilityEl) availabilityEl.textContent = 'Unavailable';
-
-                if (sessionStartedItem) sessionStartedItem.style.display = 'none';
-                if (liveDurationItem) liveDurationItem.style.display = 'none';
-                if (lastSeenItem) lastSeenItem.style.display = 'flex';
-
-                startDurationCounter(null);
-            }
-        }
-    }
-
     async function pollPresence() {
         try {
             const response = await fetch('/status.json', { cache: 'no-store' });
             if (!response.ok) {
-                throw new Error('Unavailable');
+                throw new Error('Status fetch not ok');
             }
             const data = await response.json();
-            updatePresenceUI(data);
+            
+            // Redirect if status becomes offline
+            if (data && data.status === 'offline') {
+                window.location.href = 'https://lock.arkadeb.in';
+                return;
+            }
+
+            if (data && data.status === 'online') {
+                const statusEl = document.getElementById('presence-status');
+                const activityEl = document.getElementById('presence-activity');
+                const sessionStartedEl = document.getElementById('presence-session-started');
+                const deviceTitleEl = document.getElementById('presence-device-title');
+                
+                if (statusEl && statusEl.textContent !== 'Online') {
+                    statusEl.textContent = 'Online';
+                    statusEl.className = 'presence-value text-success';
+                }
+
+                if (deviceTitleEl && data.device && deviceTitleEl.textContent !== data.device) {
+                    deviceTitleEl.textContent = data.device;
+                }
+
+                if (data.activity !== lastActivity) {
+                    lastActivity = data.activity;
+                    if (activityEl) {
+                        activityEl.textContent = data.activity || 'Unavailable';
+                    }
+                }
+
+                if (data.sessionStarted !== lastSessionStarted) {
+                    lastSessionStarted = data.sessionStarted;
+                    if (sessionStartedEl) {
+                        sessionStartedEl.textContent = formatSessionStarted(data.sessionStarted);
+                    }
+                    startDurationCounter(data.sessionStarted);
+                }
+            } else {
+                updateUIUnavailable();
+            }
         } catch (e) {
-            updatePresenceUI({ status: 'unavailable' });
+            console.error('Error fetching presence:', e);
+            updateUIUnavailable();
         }
+    }
+
+    function updateUIUnavailable() {
+        const statusEl = document.getElementById('presence-status');
+        const activityEl = document.getElementById('presence-activity');
+        const sessionStartedEl = document.getElementById('presence-session-started');
+        
+        if (statusEl) {
+            statusEl.textContent = 'Unavailable';
+            statusEl.className = 'presence-value text-muted';
+        }
+        if (activityEl) activityEl.textContent = 'Unavailable';
+        if (sessionStartedEl) sessionStartedEl.textContent = 'Unavailable';
+        
+        startDurationCounter(null);
     }
 
     if (document.getElementById('presence-card')) {

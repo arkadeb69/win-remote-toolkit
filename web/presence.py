@@ -5,7 +5,7 @@ import time
 import signal
 import atexit
 import logging
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import threading
 
 logger = logging.getLogger("PCRemoteLock.Presence")
@@ -18,7 +18,8 @@ SESSION_STARTED = None
 def write_status(status_str):
     global SESSION_STARTED
     try:
-        timestamp = datetime.now().astimezone().replace(microsecond=0).isoformat()
+        ist = timezone(timedelta(hours=5, minutes=30))
+        timestamp = datetime.now(ist).replace(microsecond=0).isoformat()
         if status_str == "online":
             if SESSION_STARTED is None:
                 try:
