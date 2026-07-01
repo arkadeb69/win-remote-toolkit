@@ -23,7 +23,58 @@ document.addEventListener('DOMContentLoaded', () => {
         themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
-    // Dashboard Specific Features
+    // ==============================================================================
+    // Landing Page Clock and Uptime System
+    // ==============================================================================
+    const landingCard = document.getElementById('landing-status-card');
+    const landingServerTime = document.getElementById('landing-server-time');
+    const landingServerUptime = document.getElementById('landing-server-uptime');
+
+    if (landingCard && landingServerTime && landingServerUptime) {
+        // Retrieve initial values injected by Flask
+        const rawTimeStr = landingCard.getAttribute('data-server-time');
+        let uptimeSeconds = parseInt(landingCard.getAttribute('data-uptime-seconds') || '0', 10);
+        
+        // Parse the ISO 8601 string
+        let serverDate = rawTimeStr ? new Date(rawTimeStr) : new Date();
+
+        function formatUptime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+        }
+
+        function formatServerTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        // Set initial values
+        landingServerTime.textContent = formatServerTime(serverDate);
+        landingServerUptime.textContent = formatUptime(uptimeSeconds);
+
+        // Update clock and uptime every second
+        setInterval(() => {
+            // Increment by 1 second (1000ms)
+            serverDate.setSeconds(serverDate.getSeconds() + 1);
+            uptimeSeconds += 1;
+
+            landingServerTime.textContent = formatServerTime(serverDate);
+            landingServerUptime.textContent = formatUptime(uptimeSeconds);
+        }, 1000);
+    }
+
+    // ==============================================================================
+    // Dashboard Specific Features (Polling & API Calls)
+    // ==============================================================================
     const connectionBadge = document.getElementById('connection-badge');
     const badgeText = document.getElementById('badge-text');
     const serverUptime = document.getElementById('server-uptime');
@@ -70,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pollInterval = setInterval(pollStatus, 3000); // poll every 3 seconds
     }
 
-// Helper to show dynamic success overlay
+    // Helper to show dynamic success overlay
     function showSuccess(icon, title, subtitle) {
         const successOverlay = document.getElementById('success-overlay');
         const successIcon = document.getElementById('success-icon');

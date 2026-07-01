@@ -7,24 +7,38 @@
     <title>Dashboard - PC Remote Lock</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <header>
-        <span class="header-title">Control Panel</span>
-        <div class="controls-row">
-            <button id="theme-toggle" class="icon-btn" title="Toggle theme">
-                <span id="theme-icon">🌙</span>
-            </button>
-            <a href="{{ url_for('logout') }}" class="icon-btn" title="Logout" style="text-decoration: none;">
-                <span>🚪</span>
-            </a>
+<body class="dashboard-body">
+    <!-- Floating background decorative mesh orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <header class="glass-header">
+        <div class="header-content">
+            <div class="header-branding">
+                <span class="logo-emoji">💻</span>
+                <span class="header-title">Remote Control Center</span>
+            </div>
+            
+            <div class="controls-row">
+                <button id="theme-toggle" class="icon-btn" title="Toggle theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+                <a href="{{ url_for('logout') }}" class="icon-btn logout-btn" title="Logout" style="text-decoration: none;">
+                    <span>🚪</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <div class="container">
-        <!-- Status Card -->
-        <div class="card">
+    <div class="container dashboard-container">
+        <!-- System Status Summary -->
+        <div class="card glass-card status-card">
             <div class="status-header">
-                <h2 style="font-size: 18px; font-weight: 600;">PC Status</h2>
+                <div class="status-title-group">
+                    <h2 class="card-title">Server Status</h2>
+                    <span class="user-role-badge">Administrator</span>
+                </div>
                 <div id="connection-badge" class="status-badge badge-connected">
                     <span class="badge-dot pulse-dot"></span>
                     <span id="badge-text">Connecting...</span>
@@ -33,14 +47,14 @@
             
             <div class="status-grid">
                 <div class="status-item">
-                    <span class="status-label">Server</span>
-                    <span class="status-value" style="color: var(--accent-green)">Active</span>
+                    <span class="status-label">Server Status</span>
+                    <span class="status-value text-success">🟢 Active</span>
                 </div>
                 <div class="status-item">
-                    <span class="status-label">Uptime</span>
-                    <span class="status-value" id="server-uptime">--</span>
+                    <span class="status-label">Server Uptime</span>
+                    <span class="status-value font-mono" id="server-uptime">--</span>
                 </div>
-                <div class="status-item" style="grid-column: span 2;">
+                <div class="status-item">
                     <span class="status-label">Device Name</span>
                     <span class="status-value" id="device-name">--</span>
                 </div>
@@ -50,51 +64,66 @@
                 </div>
                 <div class="status-item">
                     <span class="status-label">Local Time</span>
-                    <span class="status-value" id="server-time">--</span>
+                    <span class="status-value font-mono" id="server-time">--</span>
                 </div>
-                <div class="status-item" style="grid-column: span 2;">
+                <div class="status-item">
                     <span class="status-label">MAC Address</span>
-                    <span class="status-value" id="mac-address" style="font-family: monospace;">--</span>
+                    <span class="status-value font-mono" id="mac-address">--</span>
                 </div>
             </div>
         </div>
 
         <!-- Lock & Power Control Card -->
-        <div class="card" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
+        <div class="card glass-card control-card">
+            <h2 class="card-title text-center">System Commands</h2>
+            
             <div class="lock-container">
                 <button id="lock-btn" class="lock-btn lock-btn-glow" aria-label="Lock Windows Computer">
-                    <span class="lock-icon">🔒</span>
+                    <div class="lock-icon-ring">
+                        <span class="lock-icon">🔒</span>
+                    </div>
                     <span class="lock-btn-text">LOCK PC</span>
                 </button>
             </div>
             
             <div class="power-actions-grid">
                 <button id="shutdown-btn" class="btn-power btn-shutdown" aria-label="Shutdown Computer">
-                    <span class="power-icon">⏻</span>
+                    <div class="power-icon-circle">
+                        <span class="power-icon">⏻</span>
+                    </div>
                     <span class="power-text">Shutdown</span>
                 </button>
                 <button id="sleep-btn" class="btn-power btn-sleep" aria-label="Put Computer to Sleep">
-                    <span class="power-icon">💤</span>
+                    <div class="power-icon-circle">
+                        <span class="power-icon">💤</span>
+                    </div>
                     <span class="power-text">Sleep</span>
                 </button>
                 <button id="wake-btn" class="btn-power btn-wake" aria-label="Wake Up Computer (Wake on LAN)">
-                    <span class="power-icon">⚡</span>
+                    <div class="power-icon-circle">
+                        <span class="power-icon">⚡</span>
+                    </div>
                     <span class="power-text">Wake Up</span>
                 </button>
             </div>
-            <p style="font-size: 12px; color: var(--text-secondary); text-align: center; line-height: 1.4;">
-                💡 <b>Wake Up</b> sends a Wake-on-LAN packet. This works if configured in BIOS and this server is hosted on an always-on device (e.g., Raspberry Pi).
-            </p>
+            
+            <div class="tip-box">
+                <span class="tip-icon">💡</span>
+                <p class="tip-text">
+                    <b>Wake Up</b> transmits a Wake-on-LAN magic broadcast packet. This requires WOL BIOS configuration and a local server connection.
+                </p>
+            </div>
         </div>
     </div>
 
     <!-- Success Screen Overlay -->
     <div id="success-overlay" class="success-overlay" role="alert" aria-live="assertive">
-        <span id="success-icon" class="success-icon" aria-hidden="true">✅</span>
-        <h2 id="success-title" class="success-title">PC Locked Successfully</h2>
-        <p id="success-subtitle" class="success-subtitle">Returning to dashboard shortly...</p>
+        <div class="success-content-wrapper">
+            <span id="success-icon" class="success-icon" aria-hidden="true">✅</span>
+            <h2 id="success-title" class="success-title">PC Locked Successfully</h2>
+            <p id="success-subtitle" class="success-subtitle">Returning to dashboard shortly...</p>
+        </div>
     </div>
-
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Workstation Status - PC Remote Lock</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing-body">
+    <!-- Floating background decorative mesh orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="container landing-container">
+        <!-- Live status header -->
+        <div class="live-badge-container">
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                <span class="live-badge-text">LIVE</span>
+            </div>
+            <div class="badge-sub-indicators">
+                <span class="badge-sub-text">Server Connected</span>
+                <span class="badge-sub-divider">•</span>
+                <span class="badge-sub-text text-accent">Remote Access Ready</span>
+            </div>
+        </div>
+
+        <!-- Headline & Subheading -->
+        <div class="hero-section">
+            <h1 class="hero-headline">Arkadeb is working on his laptop.</h1>
+            <p class="hero-subheading">This workstation is currently online and accepting authenticated remote commands.</p>
+        </div>
+
+        <!-- Status Card -->
+        <div class="card status-glass-card" 
+             id="landing-status-card"
+             data-server-time="{{ server_time_iso }}" 
+             data-uptime-seconds="{{ uptime_seconds }}">
+            
+            <div class="status-header">
+                <span class="card-section-title">SYSTEM METRICS</span>
+                <div class="connection-indicator">
+                    <span class="indicator-dot active-pulse"></span>
+                    <span class="indicator-label">ACTIVE</span>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <span class="metric-label">Device Name</span>
+                    <span class="metric-value" id="landing-device-name">{{ device_name }}</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Local IP Address</span>
+                    <span class="metric-value" id="landing-ip-address">{{ ip_address }}</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Current Server Time</span>
+                    <span class="metric-value font-mono" id="landing-server-time">--:--:--</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Server Uptime</span>
+                    <span class="metric-value font-mono" id="landing-server-uptime">--h --m --s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="action-footer">
+            <a href="{{ url_for('login') }}" class="btn-primary btn-glow btn-landing-continue">
+                <span>Continue to Login</span>
+                <span class="btn-arrow">→</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

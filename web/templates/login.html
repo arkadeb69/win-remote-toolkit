@@ -7,48 +7,64 @@
     <title>Login - PC Remote Lock</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <header>
-        <span class="header-title">PC Remote Lock</span>
-        <div class="controls-row">
-            <button id="theme-toggle" class="icon-btn" title="Toggle theme">
-                <span id="theme-icon">🌙</span>
-            </button>
+<body class="login-body">
+    <!-- Floating background decorative mesh orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <header class="glass-header">
+        <div class="header-content">
+            <a href="{{ url_for('index') }}" class="header-logo-link">
+                <span class="header-title">PC Remote Lock</span>
+            </a>
+            <div class="controls-row">
+                <button id="theme-toggle" class="icon-btn" title="Toggle theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="container">
-        <div class="card">
+    <div class="container login-container">
+        <div class="card glass-card login-card">
             <div class="logo-container">
-                <span class="logo-icon">🔒</span>
-                <h1 class="app-name">PC Remote Lock</h1>
-                <p class="app-subtitle">Enter your password to access the control panel</p>
+                <div class="logo-circle">
+                    <span class="logo-icon">🔒</span>
+                </div>
+                <h1 class="app-name">Authentication</h1>
+                <p class="app-subtitle">Enter your security credentials to access the remote terminal</p>
             </div>
 
             {% if error %}
             <div class="alert alert-danger">
-                <span>{{ error }}</span>
+                <span class="alert-icon">⚠️</span>
+                <span class="alert-message">{{ error }}</span>
             </div>
             {% endif %}
 
-            <form action="{{ url_for('login') }}" method="POST">
+            <form action="{{ url_for('login') }}" method="POST" class="login-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 
                 <div class="input-group">
-                    <label for="password" class="input-label">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="input-field" 
-                        placeholder="••••••••" 
-                        required 
-                        autofocus
-                    >
+                    <label for="password" class="input-label">Terminal Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon-left">🔑</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="input-field" 
+                            placeholder="••••••••" 
+                            required 
+                            autofocus
+                        >
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="btn-primary btn-glow btn-submit">
                     <span>Unlock Dashboard</span>
+                    <span class="btn-arrow">→</span>
                 </button>
             </form>
         </div>

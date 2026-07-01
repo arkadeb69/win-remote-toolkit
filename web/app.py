@@ -103,8 +103,8 @@ def security_checks():
             return jsonify({"error": "CSRF token validation failed."}), 400
 
     # 2. Authentication routing guards
-    # Allow access to static assets and login endpoints without auth
-    if request.endpoint not in ("login", "static") and not session.get("logged_in"):
+    # Allow access to static assets, landing page, and login endpoints without auth
+    if request.endpoint not in ("index", "login", "static") and not session.get("logged_in"):
         # For API requests, return a JSON error
         if request.path.startswith("/api/"):
             return jsonify({"error": "Session expired or unauthorized."}), 401
@@ -124,7 +124,15 @@ def inject_csrf_token():
 def index():
     if session.get("logged_in"):
         return redirect(url_for("dashboard"))
-    return redirect(url_for("login"))
+    uptime_seconds = int(time.time() - START_TIME)
+    server_time_iso = datetime.now().isoformat()
+    return render_template(
+        "landing.html",
+        device_name=socket.gethostname(),
+        ip_address=get_local_ip(),
+        uptime_seconds=uptime_seconds,
+        server_time_iso=server_time_iso
+    )
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -156,7 +164,7 @@ def dashboard():
 def logout():
     logger.info(f"Session logged out for IP: {request.remote_addr}")
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("index"))
 
 # ==============================================================================
 # API Endpoints
