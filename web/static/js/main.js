@@ -303,4 +303,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ==============================================================================
+    // Automatic Live Status Detection
+    // ==============================================================================
+    const checkServerStatus = () => {
+        let failureCount = 0;
+        let isRedirecting = false;
+
+        const performCheck = async () => {
+            if (isRedirecting) return;
+
+            try {
+                const response = await fetch('https://lock.arkadeb.in', {
+                    method: 'HEAD',
+                    cache: 'no-store'
+                });
+
+                // Check for server-side gateway/tunnel errors indicating the laptop/server is offline
+                if (!response.ok && [502, 503, 504, 530].includes(response.status)) {
+                    isRedirecting = true;
+                    window.location.href = 'https://lock.arkadeb.in';
+                    return;
+                }
+
+                // If response was successful, reset consecutive failure count
+                failureCount = 0;
+            } catch (error) {
+                // If a request fails (e.g. network/CORS error), increment failure count.
+                // It will automatically retry in 5 seconds via the interval.
+                // Do not display any JavaScript errors to the user.
+                failureCount += 1;
+
+                // If it fails consecutively (at least 2 failed attempts), trigger redirect
+                if (failureCount >= 2) {
+                    isRedirecting = true;
+                    window.location.href = 'https://lock.arkadeb.in';
+                }
+            }
+        };
+
+        // Run checking every 5 seconds
+        setInterval(performCheck, 5000);
+    };
+
+    checkServerStatus();
+
 });
+
