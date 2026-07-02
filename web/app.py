@@ -106,7 +106,7 @@ def security_checks():
     """Initializes CSRF tokens, checks session timeout, and enforces authentication."""
     # Bypasses for HEAD requests (availability polling)
     if request.method == "HEAD":
-        return
+        return "", 200
 
     # Ensure CSRF token is initialized in the session for page-rendering routes
     if request.endpoint in ("index", "login", "dashboard"):
