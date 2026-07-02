@@ -11,6 +11,7 @@ from datetime import datetime, timezone, timedelta
 IST = timezone(timedelta(hours=5, minutes=30))
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 def get_local_mac():
     """Retrieves the physical MAC address of the system."""
@@ -39,6 +40,14 @@ logging.basicConfig(
 logger = logging.getLogger("PCRemoteLock")
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_for=1,
+    x_proto=1,
+    x_host=1,
+    x_port=1,
+    x_prefix=1
+)
 
 # Load configurations
 config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
@@ -95,6 +104,10 @@ def get_uptime_string():
 @app.before_request
 def security_checks():
     """Initializes CSRF tokens, checks session timeout, and enforces authentication."""
+    # Bypasses for HEAD requests (availability polling)
+    if request.method == "HEAD":
+        return
+
     # Ensure CSRF token is initialized in the session for page-rendering routes
     if request.endpoint in ("index", "login", "dashboard"):
         if "csrf_token" not in session:
@@ -109,7 +122,7 @@ def security_checks():
         # CSRF token can be passed in form payload or via custom header
         token = request.form.get("csrf_token") or request.headers.get("X-CSRF-Token")
         if not token or token != session.get("csrf_token"):
-            logger.warning(f"CSRF violation blocked from IP: {request.remote_addr}")
+            logger.warning(f"CSRF violation: token={token}, session_token={session.get('csrf_token')}, IP: {request.remote_addr}")
             return jsonify({"error": "CSRF token validation failed."}), 400
 
     # 2. Authentication routing guards
