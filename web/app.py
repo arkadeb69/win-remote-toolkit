@@ -95,9 +95,10 @@ def get_uptime_string():
 @app.before_request
 def security_checks():
     """Initializes CSRF tokens, checks session timeout, and enforces authentication."""
-    # Ensure CSRF token is initialized in the session
-    if "csrf_token" not in session:
-        session["csrf_token"] = secrets.token_hex(32)
+    # Ensure CSRF token is initialized in the session for page-rendering routes
+    if request.endpoint in ("index", "login", "dashboard"):
+        if "csrf_token" not in session:
+            session["csrf_token"] = secrets.token_hex(32)
         
     # Enforce session permanence for expiration tracking
     if session.get("logged_in"):
